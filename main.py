@@ -10,8 +10,8 @@ class PortScanner:
         self.port_range = port_range 
 
         #user input port scan range 
-        self.port_range = input("[+] Enter port range you would like to scan:")
-        prange = '0-' + self.port_range
+        self.port_range = input("[+] Enter port range you would like to scan: ")
+        self.prange = '0-' + self.port_range
 
     def syn_scan(self):
         try:
@@ -53,6 +53,9 @@ class PortScanner:
         
 
         print(f"[+] scan command {cmd}")
+        
+        port_count = len(list(service_result.keys()))
+        print(f"[+] Total found ports: {port_count} ")
         for port in service_result.keys():
             print(f"\n[+] Service on port {port}:")
             for key,value in service_result[port].items():
@@ -60,7 +63,7 @@ class PortScanner:
                     ##printt out found open ports and service information
                 print(f" --- {key}:{value}")
             #print out port numbers and service information
-            #print(f'[+] Service on port {port}:{service_result[port]}')
+            print(f'[+] Service on port {port}:{service_result[port]}')
 
 
     def fast_ack_scan(self):
@@ -120,6 +123,8 @@ if __name__ == "__main__":
     
 
     scanner = PortScanner("192.168.204.7") # change ip to scan target
+    print(scanner.port_range)
+    exit
     #scanner = PortScanner("127.0.0.1") 
     scan_op = scanner.scan_type()
     scanner.run(scan_op)
