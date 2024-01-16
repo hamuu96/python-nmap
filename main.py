@@ -35,14 +35,13 @@ class PortScanner:
     def connect_scan(self):
         #fast scan
         nm = nmap.PortScanner()
-        #ports = nm.scan(self.target_host, arguments='-F -sS -T5')['scan'][self.target_host]['tcp'].keys()
         ports = nm.scan(self.target_host, self.prange, arguments=' -sS -T5')['nmap']['scaninfo']['tcp']['services']
         #return open port number 
         return ports
 
     def service_scan(self, ports):
         nm = nmap.PortScanner()
-        #service_result = nm.scan(self.target_host, arguments='-sV -sC')['nmap'][self.target_host]['tcp']
+        # scan service using default scripts and version detection
         service_result = nm.scan(self.target_host, ports, arguments='-sV -sC -vv -T5')
         #print nmap results
         cmd = service_result['nmap']['command_line']
@@ -102,29 +101,33 @@ class PortScanner:
         return scan_op
 
     def run(self, scan_op):
-        print(f"Scanning {self.target_host}\n")
-        scan_op = int(scan_op)
-    
-        #choose scan based on user options
+        try:
+            
+            print(f"Scanning {self.target_host}\n")
+            scan_op = int(scan_op)
 
-        if scan_op == 1:
-            #stealth scan check if ports are open
-            ports = self.syn_scan()
-        elif scan_op == 2:
-            ports = self.connect_scan()
-            self.service_scan(ports)
-        elif scan_op == 3:
-            self.fast_ack_scan()
-        
+            #choose scan based on user options
+            if scan_op == 1:
+                #stealth scan check if ports are open
+                ports = self.syn_scan()
+            elif scan_op == 2:
+                ports = self.connect_scan()
+                self.service_scan(ports)
+            elif scan_op == 3:
+                self.fast_ack_scan()
+            elif scan_op == 'exit':
+                exit
+           
+            
+        except:
+            pass
 
 if __name__ == "__main__":
 
     #target= input("[+]     Please enter host to scan: ")
     
-
-    scanner = PortScanner("192.168.204.7") # change ip to scan target
-    print(scanner.port_range)
-    exit
-    #scanner = PortScanner("127.0.0.1") 
-    scan_op = scanner.scan_type()
-    scanner.run(scan_op)
+    while True:
+        scanner = PortScanner("192.168.204.7") # change ip to scan target
+        #scanner = PortScanner("127.0.0.1") 
+        scan_op = scanner.scan_type()
+        scanner.run(scan_op)
